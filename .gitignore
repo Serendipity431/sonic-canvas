@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Generated test audio (regenerate with: python3 scripts/make_test_audio.py)
+test-assets/*.wav
+
+# In case tooling is ever added
+node_modules/
+dist/

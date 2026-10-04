@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#04060b" />
+  <title>Sonic Canvas — Music Visualizer</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles/main.css" />
+</head>
+<body>
+
+  <!-- Icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8.2 5.3v13.4a.6.6 0 00.9.5l10.6-6.7a.6.6 0 000-1L9.1 4.8a.6.6 0 00-.9.5z" fill="currentColor" stroke="none"/>
+      </symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="7" y="4.8" width="3.2" height="14.4" rx="1.1" fill="currentColor" stroke="none"/>
+        <rect x="13.8" y="4.8" width="3.2" height="14.4" rx="1.1" fill="currentColor" stroke="none"/>
+      </symbol>
+      <symbol id="i-restart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6.5 5.2v13.6" />
+        <path d="M17.8 6.1v11.8a.5.5 0 01-.8.4L9.4 12.4a.5.5 0 010-.8l7.6-5.9a.5.5 0 01.8.4z" fill="currentColor" stroke="none"/>
+      </symbol>
+      <symbol id="i-vol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4.5 9.5v5h2.8l4.4 3.9a.5.5 0 00.8-.4V6a.5.5 0 00-.8-.4L7.3 9.5H4.5z" fill="currentColor" stroke="none"/>
+        <path d="M15.6 9.4a4 4 0 010 5.2M18.1 7a7.4 7.4 0 010 10"/>
+      </symbol>
+      <symbol id="i-vol-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4.5 9.5v5h2.8l4.4 3.9a.5.5 0 00.8-.4V6a.5.5 0 00-.8-.4L7.3 9.5H4.5z" fill="currentColor" stroke="none"/>
+        <path d="M16 9.7l4.6 4.6M20.6 9.7L16 14.3"/>
+      </symbol>
+      <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3.1"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+      </symbol>
+      <symbol id="i-expand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 9V5.5A1.5 1.5 0 015.5 4H9M20 9V5.5A1.5 1.5 0 0018.5 4H15M4 15v3.5A1.5 1.5 0 005.5 20H9M20 15v3.5a1.5 1.5 0 01-1.5 1.5H15"/>
+      </symbol>
+      <symbol id="i-compress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 4v3.5A1.5 1.5 0 017.5 9H4M15 4v3.5A1.5 1.5 0 0016.5 9H20M9 20v-3.5A1.5 1.5 0 007.5 15H4M15 20v-3.5a1.5 1.5 0 011.5-1.5H20"/>
+      </symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="7.2" width="18" height="12.3" rx="2.6"/>
+        <path d="M8.6 7.2l1.1-1.9a1 1 0 01.9-.5h2.8a1 1 0 01.9.5l1.1 1.9"/>
+        <circle cx="12" cy="13.2" r="3.3"/>
+      </symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 15.5V4.5m0 0L7.6 8.9M12 4.5l4.4 4.4"/>
+        <path d="M4.5 16v2.5A1.5 1.5 0 006 20h12a1.5 1.5 0 001.5-1.5V16"/>
+      </symbol>
+      <symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9.4 17.8V6.2a.8.8 0 01.64-.78l8-1.7a.8.8 0 01.96.78v11.2"/>
+        <circle cx="6.7" cy="17.9" r="2.7"/>
+        <circle cx="16.3" cy="15.8" r="2.7"/>
+      </symbol>
+      <symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3.5l1.8 5 5 1.8-5 1.8-1.8 5-1.8-5-5-1.8 5-1.8z" fill="currentColor" stroke="none"/>
+        <path d="M18.8 15.4l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z" fill="currentColor" stroke="none"/>
+      </symbol>
+      <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div id="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-name">SONIC&nbsp;CANVAS</span>
+        <span class="brand-sub">Realtime audio visualizer</span>
+      </div>
+
+      <nav class="modes" id="modes" aria-label="Visualizer mode">
+        <button class="mode-btn is-active" data-mode="spectrum" type="button"><i class="dot"></i>Spectrum</button>
+        <button class="mode-btn" data-mode="circle" type="button"><i class="dot"></i>Circle</button>
+        <button class="mode-btn" data-mode="wave" type="button"><i class="dot"></i>Wave</button>
+        <button class="mode-btn" data-mode="particles" type="button"><i class="dot"></i>Particles</button>
+      </nav>
+
+      <div class="topbar-actions">
+        <button class="icon-btn" id="btn-upload" type="button" title="Load music — drag &amp; drop works too" aria-label="Load music">
+          <svg><use href="#i-upload"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-saveframe" type="button" title="Save frame as PNG" aria-label="Save frame">
+          <svg><use href="#i-camera"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-fullscreen" type="button" title="Fullscreen (F)" aria-label="Fullscreen">
+          <svg class="ic-expand"><use href="#i-expand"/></svg>
+          <svg class="ic-compress"><use href="#i-compress"/></svg>
+        </button>
+        <button class="icon-btn" id="btn-settings" type="button" title="Settings" aria-label="Settings">
+          <svg><use href="#i-gear"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="stage" id="stage">
+      <canvas id="stage-canvas"></canvas>
+      <div class="mode-hint" id="mode-hint" aria-hidden="true"></div>
+      <div class="fps-chip" id="fps-chip" hidden>— FPS</div>
+
+      <section class="welcome" id="welcome">
+        <div class="welcome-inner">
+          <p class="welcome-badge"><span></span>Local · Private · Realtime<span></span></p>
+          <h1 class="welcome-logo">SONIC<span>CANVAS</span></h1>
+          <p class="welcome-tag">Drop your music. Watch it come alive.</p>
+          <div class="welcome-actions">
+            <button class="btn btn-primary" id="btn-choose" type="button">
+              <svg><use href="#i-music"/></svg>Choose Music
+            </button>
+            <button class="btn btn-ghost" id="btn-demo" type="button">
+              <svg><use href="#i-spark"/></svg>Try Demo
+            </button>
+          </div>
+          <p class="welcome-hint">or drag &amp; drop an audio file anywhere&nbsp;&nbsp;·&nbsp;&nbsp;MP3&nbsp;·&nbsp;WAV&nbsp;·&nbsp;M4A&nbsp;·&nbsp;FLAC&nbsp;·&nbsp;OGG</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="playerbar is-disabled" id="playerbar">
+      <div class="track">
+        <div class="track-art" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="track-meta">
+          <div class="track-title" id="track-title">Nothing loaded</div>
+          <div class="track-sub">
+            <span id="track-sub">Drop a file or try the demo</span>
+            <span class="badge-demo" id="badge-demo" hidden>DEMO</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="transport">
+        <button class="icon-btn" id="btn-restart" type="button" title="Restart (R)" aria-label="Restart">
+          <svg><use href="#i-restart"/></svg>
+        </button>
+        <button class="btn-play" id="btn-play" type="button" title="Play / Pause (Space)" aria-label="Play or pause">
+          <svg class="ic-play"><use href="#i-play"/></svg>
+          <svg class="ic-pause"><use href="#i-pause"/></svg>
+        </button>
+        <div class="timeline">
+          <span class="time" id="time-cur">0:00</span>
+          <div class="progress" id="progress" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+            <div class="progress-track"></div>
+            <div class="progress-fill" id="progress-fill"></div>
+            <div class="progress-thumb" id="progress-thumb"></div>
+            <div class="progress-tip" id="progress-tip" hidden>0:00</div>
+          </div>
+          <span class="time" id="time-total">0:00</span>
+        </div>
+      </div>
+
+      <div class="side">
+        <div class="pulse-chip" id="pulse-chip" title="Detected tempo">
+          <span class="beat-lamp" id="beat-lamp"></span>
+          <span class="bpm" id="bpm-value">— BPM</span>
+        </div>
+        <div class="volume">
+          <button class="icon-btn" id="btn-mute" type="button" title="Mute (M)" aria-label="Mute">
+            <svg class="ic-vol"><use href="#i-vol"/></svg>
+            <svg class="ic-volx"><use href="#i-vol-x"/></svg>
+          </button>
+          <input type="range" id="vol-range" min="0" max="1" step="0.01" value="0.85" aria-label="Volume" />
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <aside class="settings" id="settings-panel" aria-hidden="true" aria-label="Settings">
+    <header class="settings-head">
+      <h2>Settings</h2>
+      <button class="icon-btn" id="btn-close-settings" type="button" aria-label="Close settings">
+        <svg><use href="#i-x"/></svg>
+      </button>
+    </header>
+    <div class="settings-body">
+      <p class="settings-section">Analysis</p>
+      <div class="ctl">
+        <div class="ctl-row"><label for="rng-sensitivity">Sensitivity</label><output id="out-sensitivity">1.00</output></div>
+        <input type="range" id="rng-sensitivity" min="0.4" max="2" step="0.05" value="1" />
+      </div>
+      <div class="ctl">
+        <div class="ctl-row"><label for="rng-smoothing">Smoothing</label><output id="out-smoothing">0.60</output></div>
+        <input type="range" id="rng-smoothing" min="0" max="1" step="0.01" value="0.6" />
+      </div>
+
+      <p class="settings-section">Visuals</p>
+      <div class="ctl">
+        <div class="ctl-row"><label for="rng-particles">Particles</label><output id="out-particles">240</output></div>
+        <input type="range" id="rng-particles" min="80" max="480" step="20" value="240" />
+      </div>
+      <div class="ctl">
+        <div class="ctl-row"><label for="rng-intensity">Visual intensity</label><output id="out-intensity">1.00</output></div>
+        <input type="range" id="rng-intensity" min="0.5" max="1.6" step="0.05" value="1" />
+      </div>
+
+      <p class="settings-section">Display</p>
+      <label class="switch-row" for="tgl-fps">
+        <span>Show FPS counter</span>
+        <span class="switch"><input type="checkbox" id="tgl-fps" /><i></i></span>
+      </label>
+
+      <button class="btn btn-ghost btn-block" id="btn-reset-settings" type="button">Reset settings</button>
+    </div>
+  </aside>
+
+  <div class="drop-veil" id="drop-veil" aria-hidden="true">
+    <div class="drop-veil-inner">
+      <svg><use href="#i-upload"/></svg>
+      <p>Drop to play</p>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <input type="file" id="file-input" accept="audio/*,.mp3,.wav,.m4a,.flac,.ogg,.oga,.aac,.opus,.webm,.weba" hidden />
+
+  <script>
+    // Collect runtime errors so they can be surfaced in the UI if ever needed.
+    window.__errors = [];
+    window.addEventListener("error", (e) => window.__errors.push(String(e.message || e.error)));
+    window.addEventListener("unhandledrejection", (e) => window.__errors.push(String(e.reason)));
+  </script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
