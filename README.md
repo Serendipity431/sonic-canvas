@@ -6,9 +6,7 @@
 
 🔗 **在线试玩**：<https://Serendipity431.github.io/sonic-canvas/>
 
-<!-- 想放演示截图的话，截一张图保存为 docs/screenshot.png，然后取消下面这行的注释：
-![Sonic Canvas](docs/screenshot.png)
--->
+![Sonic Canvas — Circle 模式](docs/screenshot-circle.png)
 
 ## 运行
 
@@ -36,6 +34,12 @@ python3 server.py
 | Particles | 能量驱动粒子场，鼓点时从中心向外爆发 | `4` |
 
 其他快捷键：`Space` 播放/暂停 · `R` 从头播放 · `F` 全屏 · `M` 静音。
+
+| Spectrum | Circle |
+| --- | --- |
+| ![Spectrum 模式](docs/screenshot-spectrum.png) | ![Circle 模式](docs/screenshot-circle.png) |
+| **Wave** | **Particles** |
+| ![Wave 模式](docs/screenshot-wave.png) | ![Particles 模式](docs/screenshot-particles.png) |
 
 ## 设置
 
